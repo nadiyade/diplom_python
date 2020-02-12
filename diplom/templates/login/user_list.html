@@ -1,0 +1,22 @@
+<title>Users</title>
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_superuser %}
+    <table>
+        <caption><h3>Список пользователей</h3></caption>
+    <tr><th>PrKey</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Пользователь</th></tr>
+    {% for user in object_list %}
+ {% if not user.is_superuser %}
+        {% if user.patronymic_name is None %}
+        <tr><td>{{user.pk}}</td><td>{{ user.last_name }}</td><td>{{user.first_name}}</td><td></td>
+            <td><a href="{{user.get_absolute_url}}">{{ user.username }}</a></td></tr>
+        {% else %}
+        <tr><td>{{user.pk}}</td><td>{{ user.last_name }}</td><td>{{user.first_name}}</td><td>{{user.patronymic_name}}</td>
+            <td><a href="{{user.get_absolute_url}}">{{ user.username }}</a></td></tr>
+        {% endif %}
+{% endif %}
+    {% endfor %}
+    </table>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Обновление</title>
+</head>
+<body>
+<header>
+<a href="{% url 'home' %}">На главную</a>
+<form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+{% if form.photo != 'None' %}
+<img src="{{user.photo.url}}" alt="Фотография не загружена" width="10%">
+{% else %}
+<img src="/media/images/bydefault/unnamed.png" alt="Фотография не загружена" width="10%">
+{% endif %}
+{% for field in form %}
+    <p>
+        {{ field.label_tag }}<br>
+        {{ field }}
+        {% if field.help_text %}
+        <div style="color: grey">{{ field.help_text | safe }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+        <p style="color: red">{{ error | safe }}</p>
+        {% endfor %}
+    </p>
+    {% endfor %}
+      <button type="submit">Обновить информацию</button>
+    </form>
+</body>

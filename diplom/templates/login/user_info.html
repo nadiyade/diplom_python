@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Userinfo</title>
+    <style>
+   .btn1 {
+    display: inline-block;
+    background: #B8BBE3;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn1:hover {
+    display: inline-block;
+    background: #41446B;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+  </style>
+</head>
+<body>
+<header><a href="{% url 'home' %}">На главную</a><br>
+<p>Login "{{user.username}}", primary key "{{user.pk}}, user ID "{{user.id}}"</p>
+    {% if user.photo %}
+    <img src="{{user.photo.url}}" alt="Фотография не загружена" width="10%">
+    {% endif %}
+<p>Вы зарегистрированы как {{user.get_full_name}}</p>
+<p>Дата рождения {{user.birthday}}</p>
+<a href="{% url 'update' user.pk %}" class="btn1">Обновить данные пользователя</a>
+<a href="{% url 'new_claim' %}" class="btn1">Подать заявку</a>
+</body>
+<form action="", method="post", enctype="multipart/form-data">
+{% csrf_token %}
+{{ form.as_p }}
+</form>
+<h3>Поданные заявки:</h3>
+</html>

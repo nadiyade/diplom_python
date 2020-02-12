@@ -1,0 +1,31 @@
+<title>Homepage</title>
+<style>
+   .btn1 {
+    display: inline-block;
+    background: #B8BBE3;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn1:hover {
+    display: inline-block;
+    background: #41446B;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+  </style>
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>This is the homepage</h3>
+{% if user.is_superuser %}
+<a href ="{% url 'users' %}" class="btn1">Просмотр пользователей</a>
+<a href ="" class="btn1">Новые заявки</a>
+<a href ="" class="btn1">Активные заявки</a>
+<a href ="" class="btn1">Заявки на восстановление</a>
+{% endif %}
+
+{% endblock %}

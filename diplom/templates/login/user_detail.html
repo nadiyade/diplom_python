@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Вы просматриваете информацию о пользователе: {{object.username}}</h3>
+<img src="{{object.photo.url}}" alt="Фотография не загружена" width="20%"><br>
+<table>
+    <caption><h3>Данные пользователя</h3></caption>
+    <tr><th>Поле</th><th>Значение</th></tr>
+    <tr><td>Имя</td><td>{{object.first_name}}</td></tr>
+    <tr><td>Отчество</td><td>{{object.patronymic_name}}</td></tr>
+    <tr><td>Фамилия</td><td>{{object.last_name}}</td></tr>
+    <tr><td>Пол</td><td>{{object.gender}}</td></tr>
+    <tr><td>E-mail</td><td>{{object.email}}</td></tr>
+    <tr><td>Форма обращения</td><td>{{object.form_of_address}}</td></tr>
+    <tr><td>Дата рождения</td><td>{{object.birthday}}</td></tr>
+    <tr><td>Страна проживания</td><td>{{object.country.name}}</td></tr>
+    <tr><td>Область</td><td>{{object.region.}}</td></tr>
+    <tr><td>Город / населённый пункт</td><td>{{object.city}}</td></tr>
+    <tr><td>Почтовый индекс</td><td>{{object.postal_code}}</td></tr>
+    <tr><td>Адрес</td><td>{{object.address}}</td></tr>
+    <tr><td>Основной номер телефона</td><td>{{object.phone_number1}}</td></tr>
+    <tr><td>Дополнительный номер телефона</td><td>{{object.phone_number2}}</td></tr>
+    <tr><td>Scype</td><td>{{object.scype}}</td></tr>
+    <tr><td>Telegram</td><td>{{object.telegram}}</td></tr>
+    <tr><td>Viber</td><td>{{object.viber}}</td></tr>
+    <tr><td>What's App</td><td>{{object.whatsapp}}</td></tr>
+    <tr><td>Личный / рабочий сайт</td><td>{{object.user_site}}</td></tr>
+    <tr><td>Дополнительные сведения</td><td>{{object.additional}}</td></tr>
+    <tr><td>Файл</td><td>{{object.user_file}}</td></tr>
+    <tr><td>Регистрация с ІР</td><td>{{object.user_IP}}</td></tr>
+
+{% endblock %}

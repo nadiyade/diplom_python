@@ -1,0 +1,29 @@
+<title>Подача заявки</title>
+<style>
+   .btn1 {
+    display: inline-block;
+    background: #B8BBE3;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn1:hover {
+    display: inline-block;
+    background: #41446B;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+  </style>
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Заполните форму заявки</h3>
+<form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+<button type="submit">Подать заявку</button>
+</form>
+{% endblock %}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+{% if form.errors %}
+    <p style="color: red">Неправильное имя пользователя или пароль.</p>
+  {% endif %}
+<form action="" method="post">
+      {% csrf_token %}
+      <!-- as_p для того, чтобы каждый элемент формы был с новой строки -->
+      {{ form.as_p }}
+      <button type="submit">Войти на сайт</button>
+</form>
+<br>
+<a href="{% url 'home' %}">На главную</a>

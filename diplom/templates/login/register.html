@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+<header><a href="{% url 'home' %}">На главную</a><br>
+<form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+<!--      &lt;!&ndash; as_p для того, чтобы каждый элемент формы был с новой строки &ndash;&gt;-->
+<!--      {{ form.as_p }}-->
+
+{% for field in form %}
+    <p>
+        {{ field.label_tag }}
+        {{field}}
+    </p>
+        {% if field.help_text %}
+        <div style="color: grey">{{ field.help_text | safe }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+        <p style="color: red">{{ error | safe }}</p>
+        {% endfor %}
+    {% endfor %}
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+</body>
+</html>
