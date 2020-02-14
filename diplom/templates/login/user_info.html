@@ -31,11 +31,12 @@
 <p>Вы зарегистрированы как {{user.get_full_name}}</p>
 <p>Дата рождения {{user.birthday}}</p>
 <a href="{% url 'update' user.pk %}" class="btn1">Обновить данные пользователя</a>
-<a href="{% url 'new_claim' %}" class="btn1">Подать заявку</a>
+<a href="{% url 'mydiplom:claim_create' %}" class="btn1">Подать заявку</a><br>
+<p><a href="{% url 'mydiplom:client_claim_list' %}" class="btn1">Просмотреть список заявок</a></p>
 </body>
 <form action="", method="post", enctype="multipart/form-data">
 {% csrf_token %}
 {{ form.as_p }}
 </form>
-<h3>Поданные заявки:</h3>
+
 </html>

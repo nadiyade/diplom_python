@@ -66,6 +66,10 @@ class UserUpdateViewForm(forms.ModelForm):
                   'birthday', 'country', 'region', 'city', 'postal_code', 'address', 'phone_number1', 'phone_number2',
                   'scype', 'telegram', 'viber', 'whatsapp', 'additional', 'user_file')
 
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateViewForm, self).__init__(*args, **kwargs)
+        gender = self.fields['gender'].initial
+
 
 class UserListViewForm(forms.ModelForm):
     class Meta:
@@ -74,8 +78,6 @@ class UserListViewForm(forms.ModelForm):
 
 
 class ClientClaimCreateViewForm(forms.ModelForm):
-    # client = forms.HiddenInput()
-    client = forms.CharField(disabled=True, label="Пользователь", max_length=30)
     theme = forms.CharField(widget=forms.Select(choices=CLAIM_THEME), label="Тема", max_length=250)
     priority = forms.CharField(label="Степень важности заявки", widget=forms.Select(choices=CLAIM_PRIORITY),
                                max_length=10)
@@ -85,9 +87,9 @@ class ClientClaimCreateViewForm(forms.ModelForm):
     application_update = forms.DateTimeField(disabled=True, label="Дата и время обновления заявки",
                                              initial=datetime.now())
     status = forms.CharField(disabled=True, label="Статус обработки", max_length=25, initial='В обработке')
-    first_rejected = forms.BooleanField(disabled=True, label="Отклонена", initial=False)
-    finally_rejected = forms.BooleanField(disabled=True, label="Окончательно отклонена", initial=False)
-    restored = forms.BooleanField(disabled=True, label="Восстановлена", initial=False)
+    # first_rejected = forms.BooleanField(disabled=True, label="Отклонена", initial=False)
+    # finally_rejected = forms.BooleanField(disabled=True, label="Окончательно отклонена", initial=False)
+    # restored = forms.BooleanField(disabled=True, label="Восстановлена", initial=False)
     documents = forms.FileField(label='Загрузить документы (один файл)', validators=[file_size], required=False,
                                 help_text='Размер файла не должен превышать 15 MB; '
                                           'предпочтительнее в формате .pdf')
@@ -95,5 +97,44 @@ class ClientClaimCreateViewForm(forms.ModelForm):
     class Meta:
         model = Claim
         fields = '__all__'
-        # exclude = 'client' # поставить после заполнения правильности ввода пользователя по ключу
+        exclude = ('client', 'first_rejected', 'finally_rejected', 'restored')
 
+
+class ClientClaimUpdateViewForm(forms.ModelForm):
+    class Meta:
+        model = Claim
+        fields = '__all__'
+        exclude = ('client', 'first_rejected', 'finally_rejected', 'restored')
+
+    def __init__(self, *args, **kwargs):
+        super(ClientClaimUpdateViewForm, self).__init__(*args, **kwargs)
+        status = self.fields['status'].initial
+        if status is not None:
+            self.fields['status'].disabled = True
+
+
+class ClaimApproveUpdateViewForm(forms.ModelForm):
+    class Meta:
+        model = Claim
+        fields = '__all__'
+        exclude = ['first_rejected', 'finally_rejected', 'restored', 'application_date', 'application_update']
+
+    def __init__(self, *args, **kwargs):
+        super(ClaimApproveUpdateViewForm, self).__init__(*args, **kwargs)
+        self.fields['status'].disabled = True
+        self.fields['client'].disabled = True
+        self.fields['theme'].disabled = True
+        self.fields['text'].disabled = True
+        self.fields['priority'].disabled = True
+        self.fields['documents'].disabled = True
+
+
+class CommentCreateViewForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        exclude = ['date_created', 'date_updated', 'author', 'to_claim']
+
+
+# ['theme', 'priority', 'text', 'client', 'application_date', 'application_update', 'status', 'first_rejected', 'finally_rejected',
+# 'restored', 'documents']

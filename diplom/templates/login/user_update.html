@@ -7,6 +7,7 @@
 <body>
 <header>
 <a href="{% url 'home' %}">На главную</a>
+<input type="button" onclick="history.back();" value="Не обновлять"/>
 <form action="" method="post" enctype="multipart/form-data">
       {% csrf_token %}
 {% if form.photo != 'None' %}

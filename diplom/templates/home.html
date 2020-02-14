@@ -16,6 +16,22 @@
     border-radius: 3px;
     color: white
     }
+    .btn3 {
+    display: inline-block;
+    background: #60D4AE;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn3:hover {
+    display: inline-block;
+    background: #006E4A;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
   </style>
 {% extends 'base.html' %}
 
@@ -23,6 +39,7 @@
 <h3>This is the homepage</h3>
 {% if user.is_superuser %}
 <a href ="{% url 'users' %}" class="btn1">Просмотр пользователей</a>
+<a href ="{% url 'mydiplom:client_claims' %}" class="btn3">Все заявки</a>
 <a href ="" class="btn1">Новые заявки</a>
 <a href ="" class="btn1">Активные заявки</a>
 <a href ="" class="btn1">Заявки на восстановление</a>

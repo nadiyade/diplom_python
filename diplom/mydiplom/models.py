@@ -1,13 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import datetime, date, time, timedelta
-
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django_countries.fields import CountryField
+import django_filters
 from django.http import request
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from markupsafe import text_type
 from .user_ip import get_user_ip
 
 GENDER = (
@@ -44,7 +45,7 @@ class MyUser(AbstractUser):
     first_name = models.CharField(max_length=100, verbose_name='Имя')
     patronymic_name = models.CharField(max_length=100, verbose_name='Отчество', null=True, blank=True)
     last_name = models.CharField(max_length=100, verbose_name='Фамилия')
-    gender = models.CharField(choices=GENDER, max_length=7, default='Не определён')
+    gender = models.CharField(choices=GENDER, max_length=7, default='Не определён', verbose_name='Пол')
     email = models.EmailField(max_length=40, help_text='Введите e-mail в формате "myname@mymail.com"')
     form_of_address = models.CharField(max_length=20, null=True, blank=True)
     birthday = models.DateField(verbose_name='Дата рождения', default=datetime.now() - timedelta(days=10957.5))
@@ -77,12 +78,14 @@ class MyUser(AbstractUser):
 
 class Claim(models.Model):
     theme = models.CharField(choices=CLAIM_THEME, default="Не определена", max_length=250, verbose_name="Тема")
-    priority = models.CharField(choices=CLAIM_PRIORITY, default="Средняя", max_length=10)
-    text = models.TextField(max_length=40000, verbose_name='Текст заявки (не более 40 000 знаков)', null=True, blank=True)
+    priority = models.CharField(choices=CLAIM_PRIORITY, default="Средняя", max_length=10,
+                                verbose_name="Степень важности")
+    text = models.TextField(max_length=40000, verbose_name='Текст заявки (не более 40 000 знаков)',
+                            null=True, blank=True)
     client = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING, verbose_name="Пользователь")
     application_date = models.DateTimeField(verbose_name="Дата и время подачи заявки", auto_now_add=True)
     application_update = models.DateTimeField(verbose_name="Дата и время обновления заявки", auto_now=True)
-    status = models.CharField(choices=CLAIM_STATUS, default="В обработке", max_length=25)
+    status = models.CharField(choices=CLAIM_STATUS, default="В обработке", max_length=25, verbose_name="Статус")
     first_rejected = models.BooleanField(default=False, verbose_name="Отклонена")
     finally_rejected = models.BooleanField(default=False, verbose_name="Окончательно отклонена")
     restored = models.BooleanField(default=False, verbose_name="Восстановлена")
@@ -92,12 +95,18 @@ class Claim(models.Model):
         ordering = ['-application_date', 'client']
 
 
+class ClientClaimFilter(django_filters.FilterSet):
+    class Meta:
+        model = Claim
+        fields = ['theme', 'priority', 'restored', 'status']
+
+
 class Comment(models.Model):
     to_claim = models.ForeignKey(Claim, on_delete=models.CASCADE, verbose_name="Обрабатываемая заявка")
     author = models.ForeignKey(MyUser, on_delete=models.CASCADE, verbose_name="Автор")
     text = models.TextField(verbose_name="Ваш комментарий")
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True, verbose_name="Комментарий создан")
+    date_updated = models.DateTimeField(auto_now=True, verbose_name="Комментарий обновлен")
 
     class Meta:
         ordering = ['-date_updated', 'to_claim']

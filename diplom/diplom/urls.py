@@ -19,15 +19,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from mydiplom.views import home, RegisterFormView, LoginFormView, LogoutFormView, user_info, UserUpdateView\
-    , UserListView, UserDetailView
+    , UserListView, UserDetailView, ClientClaimListView
 
+my_app = 'mydiplom'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('register/', RegisterFormView.as_view(), name='register'),
     path('login/', LoginFormView.as_view(), name='login'),
     path('logout/', LogoutFormView.as_view(), name='logout'),
-    path('user/<int:user.pk>/', user_info, name='user_info'),
+    path('user/<int:user.pk>/', user_info, name='user_info'),  # personal cabinet
     path('<int:pk>/', UserDetailView.as_view(), name='user_detail'),
     path('update/<int:pk>/', UserUpdateView.as_view(), name='update'),
     path('users/', UserListView.as_view(), name='users'),

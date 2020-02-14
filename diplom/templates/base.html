@@ -26,13 +26,16 @@
 <header><a href="{% url 'home' %}" class="btn">На главную</a>
 {% if user.is_authenticated %}
     <a href="{% url 'update' user.pk %}"class="btn">Обновить данные пользователя</a>
+    {% if not user.is_superuser %}
     <a href="{% url 'user_info' %}"class="btn">Перейти в личный кабинет</a>
+    {% endif %}
     <a href="{% url 'logout' %}"class="btn">Выйти из учётной записи</a><br>
     {% if user.photo %}
     <img src="{{user.photo.url}}" alt="Фотография не загружена" width="10%" vspace="10">
     {% endif %}<br>
     <p>Вы на сайте под именем "{{user.username}}", id "{{user.id}}"</p>
     <p>Пользователь зарегистрирован {{user.date_joined}}</p> <p>Последний вход {{user.last_login}} IP: {{user.user_IP}}</p>
+    {{ ip }}
 {% else %}
     <a href="{% url 'login' %}"class="btn">Войти (для зарегистрированных пользователей)</a>
     <a href="{% url 'register' %}"class="btn">Зарегистрироваться</a>
@@ -44,17 +47,21 @@
 {% block pagination %}
   {% if is_paginated %}
       <div class="pagination">
-          <span class="page-links">
-              {% if page_obj.has_previous %}
-                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Предыдущая</a>
-              {% endif %}
-              <span class="page-current">
-                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-              </span>
-              {% if page_obj.has_next %}
-                  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">Следующая</a>
-              {% endif %}
-          </span>
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">следующая</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">последняя</a>
+        {% endif %}
+    </span>
       </div>
   {% endif %}
 {% endblock %}
