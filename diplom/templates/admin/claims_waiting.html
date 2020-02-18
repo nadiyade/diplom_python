@@ -1,0 +1,62 @@
+<title>Заявки в обработке</title>
+    <style>
+    .btn3 {
+    display: inline-block;
+    background: #60D4AE;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn3:hover {
+    display: inline-block;
+    background: #006E4A;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+    .btn4 {
+    display: inline-block;
+    background: #FF9B73;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn4:hover {
+    display: inline-block;
+    background: #A62F00;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+  </style>
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Заявки в очереди:</h3>
+{% for claim in object_list %}
+    <b>Код </b>{{ claim.id }}
+    {{ claim.client }}
+    <b>Тема</b> {{ claim.theme }}
+    <b>Приоритетность</b> {{ claim.priority }}
+    <b>Обновлена</b>{{ claim.application_update }}
+    <b>Создана</b> {{ claim.application_date }}
+    <p><b>Статус</b> {{ claim.status }}</p>
+
+    {{ claim.text }}<br>
+
+    {% if claim.status == "В обработке" and user.is_superuser %}
+    <br>
+    <a href="{% url 'mydiplom:approve_claim' pk=claim.pk %}" class="btn3">Подтвердить</a>
+    <a href="{% url 'mydiplom:reject_claim' pk=claim.pk %}" class="btn4">Отклонить</a>
+    {% endif %}
+    <hr>
+{% empty %}
+<p>Нет заявок в очереди</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,46 @@
+<title>Заявки в обработке</title>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Заявки в обработке:</h3>
+{% for claim in object_list %}
+    <b>Код </b>{{ claim.id }}
+    {{ claim.client }}
+    <b>Тема</b> {{ claim.theme }}
+    <b>Приоритетность</b> {{ claim.priority }}
+    <b>Обновлена</b>{{ claim.application_update }}
+    <b>Создана</b> {{ claim.application_date }}
+    <p><b>Статус</b> {{ claim.status }}</p>
+    {% if claim.first_rejected == True %}
+    <b>Отклонена</b> {{ claim.first_rejected }}
+    <p style="color:red"><b>Причина отклонения</b> {{ claim.first_rejected_comment }}</p>
+        {% if claim.restore_request == True %}
+            <p style="color:blue"><b>Подана на восстановление</b> {{ claim.restore_request }}</p>
+            <p style="color:blue"><b>Причина повторного запроса</b> {{ claim.restore_request_text }}</p>
+        {% endif %}
+    {% endif %}
+
+    {{ claim.text }}<br>
+
+<form action="{% url 'mydiplom:comment_create' %}" method="post">
+{% csrf_token %}
+    <br>
+    <input type="text" name="text" />
+    <input type=hidden name="to_claim" value = {{claim.pk}}>
+<input type="submit" value="Добавить комментарий">
+</form>
+
+    {% if claim.comment_set.all %}
+    <p style="color:green">Комментарии к заявке:</p>
+        {% for comment in claim.comment_set.all %}
+        {{comment.id}} {{comment.author}} {{comment.date_created}} {{comment.text}}<br>
+        {% endfor %}
+    {% else %}
+    <p style="color:grey">Заявка без комментариев</p>
+    {% endif %}
+    <hr>
+{% empty %}
+<p>Нет заявок в работе</p>
+{% endfor %}
+{% endblock %}

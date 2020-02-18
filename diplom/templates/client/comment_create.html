@@ -1,0 +1,10 @@
+<title>Create comment</title>
+<form action="" method="post">
+{% csrf_token %}
+{{ form.to_claim.label }} {{ form.to_claim.value }}
+{{ form.author.label }} {{ form.author.value }}
+    <br>
+    <input type="text" name="text" />
+    <input type=hidden name="to_claim" value = {{claim.pk}}>
+<input type="submit" value="Добавить комментарий">
+</form>

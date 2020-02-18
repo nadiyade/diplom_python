@@ -1,0 +1,37 @@
+<title>Окончательно отклонённые</title>
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_superuser %}
+<h3>Окончательно отклонённые заявки:</h3>
+        {% for claim in object_list %}
+            <b>Код </b>{{ claim.id }}
+            {{ claim.client }}
+            <b>Тема</b> {{ claim.theme }}
+            <b>Приоритетность</b> {{ claim.priority }}
+            <b>Обновлена</b>{{ claim.application_update }}
+            <b>Создана</b> {{ claim.application_date }}
+            <p><b>Статус</b> {{ claim.status }}</p>
+            <p><b>Подана на восстановление</b> {{ claim.restore_request }}</p>
+            {{ claim.text }}<br>
+            <p style="color:red"><b>Причина отклонения</b> {{ claim.first_rejected_comment }}</p>
+            <p style="color:blue"><b>Причина повторного запроса</b> {{ claim.restore_request_text }}</p>
+            <p style="color:red"><b>Причина окончательного отказа</b> {{ claim.finally_rejected_comment }}</p>
+            {% if claim.comment_set.all %}
+            <p style="color:green">Комментарии к заявке:</p>
+                {% for comment in claim.comment_set.all %}
+                {{comment.id}} {{comment.author}} {{comment.date_created}} {{comment.text}}<br>
+                {% endfor %}
+            {% else %}
+            <p style="color:grey">Заявка без комментариев</p>
+            {% endif %}
+            <hr>
+        {% empty %}
+        <p>Нет заявок</p>
+        {% endfor %}
+
+{% else %}
+<h3>У Вас нет доступа к этой странице</h3>
+{% endif %}
+
+{% endblock %}

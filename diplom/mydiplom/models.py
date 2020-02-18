@@ -87,9 +87,17 @@ class Claim(models.Model):
     application_update = models.DateTimeField(verbose_name="Дата и время обновления заявки", auto_now=True)
     status = models.CharField(choices=CLAIM_STATUS, default="В обработке", max_length=25, verbose_name="Статус")
     first_rejected = models.BooleanField(default=False, verbose_name="Отклонена")
+    first_rejected_comment = models.TextField(max_length=10000, verbose_name='Причина отклонения',
+                                              default="В данный момент все специалисты заняты")
+    restore_request = models.BooleanField(default=False, verbose_name="Запрос на восстановление")
+    restore_request_text = models.TextField(max_length=10000, verbose_name='Причина восстановления',
+                                            default="Просьба восстановить заявку")
     finally_rejected = models.BooleanField(default=False, verbose_name="Окончательно отклонена")
+    finally_rejected_comment = models.TextField(max_length=10000, verbose_name='Причина окончательного отклонения',
+                                                default="Заявку невозможно обработать")
     restored = models.BooleanField(default=False, verbose_name="Восстановлена")
-    documents = models.FileField(verbose_name='Загрузить документы (один файл)', upload_to='files/', null=True, blank=True)
+    documents = models.FileField(verbose_name='Загрузить документы (один файл)', upload_to='files/', null=True,
+                                 blank=True)
 
     class Meta:
         ordering = ['-application_date', 'client']
@@ -110,4 +118,3 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-date_updated', 'to_claim']
-

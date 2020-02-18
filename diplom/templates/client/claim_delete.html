@@ -1,0 +1,10 @@
+<title>Удалить заявку</title>
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="post">
+    {% csrf_token %}
+    <input type="submit" value="Подтвердите удаление заявки">
+    </form>
+<input type="button" onclick="history.back();" value="Вернуться к списку заявок"/>
+{% endblock %}

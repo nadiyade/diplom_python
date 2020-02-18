@@ -1,0 +1,19 @@
+<title>Отклонить заявку</title>
+{{claim.pk}}
+<!--<form action="" method="post" enctype="multipart/form-data">-->
+<!--{% csrf_token %}-->
+<!--{% for field in form %}-->
+<!--    <p>{{ field.label_tag }}</p> {{ field }}<br>-->
+<!--{% endfor %}-->
+<!--Введите комментарий <input autofocus type="text" name="comment.text" />-->
+<!--<input type=hidden name="comment.to_claim" value = {{claim.pk}}>-->
+<!--<input type="submit" value="Отклонить заявку">-->
+<!--</form>-->
+<form method="post" action="">
+{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Отклонить заявку">
+</form>
+
+<input type="button" onclick="history.back();" value="Не отклонять"/>
+

@@ -1,6 +1,3 @@
-from pickle import GET
-
-from django.contrib.auth import models
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseRedirect
@@ -9,7 +6,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, UpdateView, ListView, DetailView, CreateView, DeleteView
 from .models import Claim, Comment, MyUser, ClientClaimFilter
 from .forms import MyForm, UserUpdateViewForm, ClientClaimCreateViewForm, ClientClaimUpdateViewForm, \
-    ClaimApproveUpdateViewForm, CommentCreateViewForm
+    ClaimApproveUpdateViewForm, CommentCreateViewForm, ClaimRejectUpdateViewForm, ClaimRestoreUpdateViewForm, \
+    ClaimFinalRejectUpdateViewForm
 
 
 def home(request):
@@ -104,7 +102,10 @@ class ClientClaimListView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        queryset = Claim.objects.filter(client=self.request.user)
+        if self.request.user.is_superuser:
+            queryset = Claim.objects.all()
+        else:
+            queryset = Claim.objects.filter(client=self.request.user)
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -114,9 +115,51 @@ class ClientClaimListView(ListView):
         return context
 
 
+class ClaimAllRejectedListView(ListView):
+    model = Claim
+    template_name = 'admin/claims_finally_rejected.html'
+    ordering = ['-application_update']
+    paginate_by = 5
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            queryset = Claim.objects.filter(finally_rejected=True)
+        else:
+            queryset = Claim.objects.filter(client=self.request.user)
+        return queryset
+
+
+class ClaimInProgressListView(ListView):
+    model = Claim
+    template_name = 'admin/claims_in_progress.html'
+    ordering = ['-application_update']
+    paginate_by = 5
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            queryset = Claim.objects.filter(status="Принятая")
+        else:
+            queryset = Claim.objects.filter(client=self.request.user)
+        return queryset
+
+
+class ClaimWaitingListView(ListView):
+    model = Claim
+    template_name = 'admin/claims_waiting.html'
+    ordering = ['-application_update']
+    paginate_by = 5
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            queryset = Claim.objects.filter(status="В обработке")
+        else:
+            queryset = Claim.objects.filter(client=self.request.user)
+        return queryset
+
+
 class ClaimApproveUpdateView(UpdateView):
     model = Claim
-    success_url = reverse_lazy('mydiplom:client_claims')
+    success_url = reverse_lazy('mydiplom:client_claim_list')
     form_class = ClaimApproveUpdateViewForm
     template_name = 'admin/approve_claim.html'  # форма подтверждения заявки
 
@@ -137,11 +180,92 @@ class CommentCreateView(CreateView):
     def form_valid(self, form):
         object = form.save(commit=False)
         object.author = self.request.user
-        # object.to_claim = Comment.objects.select_related('to_claim').get(id='claim.pk')
-        # object.to_claim = Comment.objects.filter(to_claim=int('claim.pk'))
-        object.to_claim = Comment.objects.filter(to_claim=claim.pk)
         self.object = object
         object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CommentListView(ListView):
+    model = Comment
+    template_name = 'admin/claims_all.html'
+    # template_name = ['client/client_claim_list.html', 'admin/claims_all.html']
+    ordering = ['-date_created']
+    context_object_name = 'comment_list'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        return context
+
+    # def get_queryset(self):
+    #     queryset = Comment.objects.filter(to_claim='claim.pk')
+    #     return queryset
+
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     context = super().get_context_data(object_list=self.model, **kwargs)
+    #     # context.update(
+    #     #     {'comment_update_form': CommentUpdateViewForm})
+    #     return context
+
+
+class ClaimToRestoreListView(ListView):
+    model = Claim
+    template_name = 'admin/claims_to_restore.html'
+    ordering = ['-application_date']
+    context_object_name = 'claim_to_restore_list'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        return context
+
+    def get_queryset(self):
+        queryset = Claim.objects.filter(restore_request=True, finally_rejected=False)
+        return queryset
+
+
+class ClaimRejectUpdateView(UpdateView):
+    model = Claim
+    template_name = 'admin/reject_claim.html'
+    success_url = reverse_lazy('mydiplom:client_claim_list')
+    form_class = ClaimRejectUpdateViewForm
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.status = str('Отклонённая')
+        instance.first_rejected = True
+        if instance.restore_request:
+            instance.status = str('Окончательно отклонённая')
+            instance.finally_rejected = True
+        self.instance = instance
+        instance.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class ClaimFinalRejectUpdateView(UpdateView):
+    model = Claim
+    template_name = 'admin/final_reject_claim.html'
+    success_url = reverse_lazy('mydiplom:client_claim_list')
+    form_class = ClaimFinalRejectUpdateViewForm
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.status = str('Окончательно отклонённая')
+        instance.finally_rejected = True
+        self.instance = instance
+        instance.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class ClaimRestoreUpdateView(UpdateView):
+    model = Claim
+    template_name = 'client/restore_claim.html'
+    success_url = reverse_lazy('mydiplom:client_claim_list')
+    form_class = ClaimRestoreUpdateViewForm
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.restore_request = True
+        self.instance = instance
+        instance.save()
         return HttpResponseRedirect(self.get_success_url())
 
 

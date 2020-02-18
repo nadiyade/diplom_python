@@ -16,11 +16,13 @@ class MyUserAdmin(admin.ModelAdmin):
 
 class ClaimAdmin(admin.ModelAdmin):
     display = '__all__'
+    list_display = ('client', 'priority', 'status', 'text', 'first_rejected', 'finally_rejected', 'restored')
 
 
 class CommentAdmin(admin.ModelAdmin):
     display = '__all__'
-    exclude = ['text']
+    list_display = ('to_claim', 'author', 'text', 'date_created')
+    # exclude = ['text']
 
 
 admin.site.register(MyUser, MyUserAdmin)

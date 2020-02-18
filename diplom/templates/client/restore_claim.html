@@ -1,0 +1,10 @@
+<title>Восстановить заявку</title>
+{{claim.pk}}
+
+<form method="post" action="">
+{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Восстановить заявку">
+</form>
+
+<input type="button" onclick="history.back();" value="Не восстанавливать"/>

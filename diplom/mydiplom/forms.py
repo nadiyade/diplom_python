@@ -97,7 +97,8 @@ class ClientClaimCreateViewForm(forms.ModelForm):
     class Meta:
         model = Claim
         fields = '__all__'
-        exclude = ('client', 'first_rejected', 'finally_rejected', 'restored')
+        exclude = ('client', 'first_rejected', 'first_rejected_comment', 'first_rejected_comment', 'finally_rejected',
+                   'finally_rejected_comment', 'restore_request', 'restore_request_text', 'restored')
 
 
 class ClientClaimUpdateViewForm(forms.ModelForm):
@@ -117,7 +118,8 @@ class ClaimApproveUpdateViewForm(forms.ModelForm):
     class Meta:
         model = Claim
         fields = '__all__'
-        exclude = ['first_rejected', 'finally_rejected', 'restored', 'application_date', 'application_update']
+        exclude = ['first_rejected', 'first_rejected_comment', 'finally_rejected', 'finally_rejected_comment',
+                   'restore_request', 'restore_request_text', 'restored', 'application_date', 'application_update']
 
     def __init__(self, *args, **kwargs):
         super(ClaimApproveUpdateViewForm, self).__init__(*args, **kwargs)
@@ -133,8 +135,76 @@ class CommentCreateViewForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = '__all__'
-        exclude = ['date_created', 'date_updated', 'author', 'to_claim']
+        exclude = ['date_created', 'date_updated', 'author']
+        widgets = {'to_claim': forms.HiddenInput()}
 
 
 # ['theme', 'priority', 'text', 'client', 'application_date', 'application_update', 'status', 'first_rejected', 'finally_rejected',
 # 'restored', 'documents']
+
+
+class ClaimRejectUpdateViewForm(forms.ModelForm):
+    first_rejected_comment = forms.CharField(max_length=10000, label='Причина отклонения', widget=forms.Textarea,
+                                             required=True)
+
+    class Meta:
+        model = Claim
+        fields = '__all__'
+        exclude = ['finally_rejected', 'finally_rejected_comment', 'restore_request_text', 'restored',
+                   'application_date', 'application_update', 'restore_request']
+
+    def __init__(self, *args, **kwargs):
+        super(ClaimRejectUpdateViewForm, self).__init__(*args, **kwargs)
+        self.fields['status'].disabled = True
+        self.fields['first_rejected'].disabled = True
+        self.fields['client'].disabled = True
+        self.fields['theme'].disabled = True
+        self.fields['text'].disabled = True
+        self.fields['priority'].disabled = True
+        self.fields['documents'].disabled = True
+
+
+class ClaimFinalRejectUpdateViewForm(forms.ModelForm):
+    finally_rejected_comment = forms.CharField(max_length=10000, label='Причина окончательного отклонения',
+                                               widget=forms.Textarea, required=True)
+
+    class Meta:
+        model = Claim
+        fields = '__all__'
+        exclude = ['restored', 'application_date', 'application_update']
+
+    def __init__(self, *args, **kwargs):
+        super(ClaimFinalRejectUpdateViewForm, self).__init__(*args, **kwargs)
+        self.fields['client'].disabled = True
+        self.fields['theme'].disabled = True
+        self.fields['text'].disabled = True
+        self.fields['priority'].disabled = True
+        self.fields['documents'].disabled = True
+        self.fields['status'].disabled = True
+        self.fields['first_rejected'].disabled = True
+        self.fields['first_rejected_comment'].disabled = True
+        self.fields['restore_request'].disabled = True
+        self.fields['restore_request_text'].disabled = True
+        self.fields['finally_rejected'].disabled = True
+
+
+class ClaimRestoreUpdateViewForm(forms.ModelForm):
+    restore_request_text = forms.CharField(max_length=10000, label='Причина восстановления', widget=forms.Textarea,
+                                           required=True)
+
+    class Meta:
+        model = Claim
+        fields = '__all__'
+        exclude = ['finally_rejected', 'finally_rejected_comment', 'restored',
+                   'application_date', 'application_update', 'restore_request']
+
+    def __init__(self, *args, **kwargs):
+        super(ClaimRestoreUpdateViewForm, self).__init__(*args, **kwargs)
+        self.fields['status'].disabled = True
+        self.fields['first_rejected'].disabled = True
+        self.fields['first_rejected_comment'].disabled = True
+        self.fields['client'].disabled = True
+        self.fields['theme'].disabled = True
+        self.fields['text'].disabled = True
+        self.fields['priority'].disabled = True
+        self.fields['documents'].disabled = True

@@ -1,0 +1,90 @@
+<title>Заявки на восстановление</title>
+    <style>
+   .btn1 {
+    display: inline-block;
+    background: #B8BBE3;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn1:hover {
+    display: inline-block;
+    background: #41446B;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+        .btn3 {
+    display: inline-block;
+    background: #60D4AE;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn3:hover {
+    display: inline-block;
+    background: #006E4A;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+    .btn4 {
+    display: inline-block;
+    background: #FF9B73;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn4:hover {
+    display: inline-block;
+    background: #A62F00;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+  </style>
+
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_superuser %}
+<h3>Заявки на восстановление:</h3>
+        {% for claim in object_list %}
+            <b>Код </b>{{ claim.id }}
+            {{ claim.client }}
+            <b>Тема</b> {{ claim.theme }}
+            <b>Приоритетность</b> {{ claim.priority }}
+            <b>Обновлена</b>{{ claim.application_update }}
+            <b>Создана</b> {{ claim.application_date }}
+            <p><b>Статус</b> {{ claim.status }}</p>
+            <p><b>Подана на восстановление</b> {{ claim.restore_request }}</p>
+            {{ claim.text }}<br>
+            <p style="color:red"><b>Причина отклонения</b> {{ claim.first_rejected_comment }}</p>
+            <p style="color:blue"><b>Причина повторного запроса</b> {{ claim.restore_request_text }}</p>
+            {% if claim.comment_set.all %}
+            <p style="color:green">Комментарии к заявке:</p>
+                {% for comment in claim.comment_set.all %}
+                {{comment.id}} {{comment.author}} {{comment.date_created}} {{comment.text}}<br>
+                {% endfor %}
+            {% else %}
+            <p style="color:grey">Заявка без комментариев</p>
+            {% endif %}
+
+                <a href="{% url 'mydiplom:approve_claim' pk=claim.pk %}" class="btn3">Восстановить</a>
+                <a href="{% url 'mydiplom:final_reject_claim' claim.pk %}" class="btn4">Отклонить повторно</a>
+            <hr>
+        {% empty %}
+        <p>Нет заявок на восстановление</p>
+        {% endfor %}
+
+{% else %}
+<h3>У Вас нет доступа к этой странице</h3>
+{% endif %}
+
+{% endblock %}

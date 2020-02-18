@@ -1,0 +1,133 @@
+<title>Мои заявки</title>
+    <style>
+   .btn1 {
+    display: inline-block;
+    background: #B8BBE3;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn1:hover {
+    display: inline-block;
+    background: #41446B;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+        .btn3 {
+    display: inline-block;
+    background: #60D4AE;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn3:hover {
+    display: inline-block;
+    background: #006E4A;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+    .btn4 {
+    display: inline-block;
+    background: #FF9B73;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn4:hover {
+    display: inline-block;
+    background: #A62F00;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+  </style>
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Поданные заявки:</h3>
+{% for claim in object_list %}
+    <b>Код </b>{{ claim.id }}
+    {{ claim.client }}
+    <b>Тема</b> {{ claim.theme }}
+    <b>Приоритетность</b> {{ claim.priority }}
+    <b>Обновлена</b>{{ claim.application_update }}
+    <b>Создана</b> {{ claim.application_date }}
+    <p><b>Статус</b> {{ claim.status }}</p>
+    {% if claim.first_rejected == True %}
+    <b>Отклонена</b> {{ claim.first_rejected }}<br>
+        {% if claim.restore_request == True %}
+            <p style="color:blue"><b>Подана на восстановление</b> {{ claim.restore_request }}</p>
+            <p style="color:blue"><b>Причина повторного запроса</b> {{ claim.restore_request_text }}</p>
+        {% endif %}
+    <p style="color:red"><b>Причина отклонения</b> {{ claim.first_rejected_comment }}
+        {% if not user.is_superuser and claim.restore_request == False %}
+            <a href="{% url 'mydiplom:restore_claim' claim.pk %}" class="btn4">Восстановить заявку</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    {% if claim.finally_rejected == True %}
+    <p style="color:red"><b>Причина окончательного отклонения</b> {{ claim.finally_rejected_comment }}</p>
+    {% endif %}
+
+    {{ claim.text }}<br>
+
+        {% if claim.status == 'В обработке' and not user.is_superuser %}
+        <br>
+        <form action="{% url 'mydiplom:claim_update' claim.pk %}" method="post">
+        {% csrf_token %}
+        <input class="btn3" type="submit" value="Обновить заявку">
+        </form>
+        <form action="{% url 'mydiplom:claim_delete' claim.pk %}" method="post">
+        {% csrf_token %}
+        <input class="btn4" type="submit" value="Удалить заявку">
+        </form>
+        {% endif %}
+
+        {% if claim.finally_rejected and not user.is_superuser %}
+        <br>
+        <form action="{% url 'mydiplom:claim_delete' claim.pk %}" method="post">
+        {% csrf_token %}
+        <input class="btn4" type="submit" value="Удалить заявку">
+        </form>
+        {% endif %}
+
+        {% if claim.status == 'Принятая' %}
+        <form action="{% url 'mydiplom:comment_create' %}" method="post">
+        {% csrf_token %}
+            <br>
+            <input type="text" name="text" />
+            <input type=hidden name="to_claim" value = {{claim.pk}}>
+        <input type="submit" value="Добавить комментарий">
+        </form>
+        {% endif %}
+
+        {% if claim.status == "В обработке" and user.is_superuser %}
+        <br>
+        <a href="{% url 'mydiplom:approve_claim' pk=claim.pk %}" class="btn3">Подтвердить</a>
+        <a href="{% url 'mydiplom:reject_claim' pk=claim.pk %}" class="btn4">Отклонить</a>
+        {% endif %}
+
+    {% if claim.comment_set.all %}
+    <p style="color:green">Комментарии к заявке:</p>
+        {% for comment in claim.comment_set.all %}
+        {{comment.id}} {{comment.author}} {{comment.date_created}} {{comment.text}}<br>
+        {% endfor %}
+    {% else %}
+    <p style="color:grey">Заявка без комментариев</p>
+    {% endif %}
+    <hr>
+{% empty %}
+<p>У вас нет заявок</p>
+{% endfor %}
+{% endblock %}

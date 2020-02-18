@@ -39,10 +39,12 @@
 <h3>This is the homepage</h3>
 {% if user.is_superuser %}
 <a href ="{% url 'users' %}" class="btn1">Просмотр пользователей</a>
-<a href ="{% url 'mydiplom:client_claims' %}" class="btn3">Все заявки</a>
-<a href ="" class="btn1">Новые заявки</a>
-<a href ="" class="btn1">Активные заявки</a>
-<a href ="" class="btn1">Заявки на восстановление</a>
+<a href ="{% url 'mydiplom:client_claims' %}" class="btn3">Фильтр по заявкам</a>
+<a href ="{% url 'mydiplom:client_claim_list' %}" class="btn3">Все заявки</a>
+<a href ="{% url 'mydiplom:claims_waiting' %}" class="btn1">Новые заявки</a>
+<a href ="{% url 'mydiplom:in_progress' %}" class="btn1">Активные заявки</a>
+<a href ="{% url 'mydiplom:claim_to_restore' %}" class="btn1">Заявки на восстановление</a>
+<a href ="{% url 'mydiplom:all_rejected' %}" class="btn1">Окончательно отклонённые</a>
 {% endif %}
 
 {% endblock %}

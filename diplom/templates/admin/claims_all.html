@@ -1,0 +1,101 @@
+<title>All claims</title>
+<style>
+   .btn1 {
+    display: inline-block;
+    background: #B8BBE3;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn1:hover {
+    display: inline-block;
+    background: #41446B;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+    <style>
+   .btn1 {
+    display: inline-block;
+    background: #B8BBE3;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn1:hover {
+    display: inline-block;
+    background: #41446B;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+        .btn3 {
+    display: inline-block;
+    background: #60D4AE;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn3:hover {
+    display: inline-block;
+    background: #006E4A;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+    .btn4 {
+    display: inline-block;
+    background: #FF9B73;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: black
+   }
+    .btn4:hover {
+    display: inline-block;
+    background: #A62F00;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    border-radius: 3px;
+    color: white
+    }
+</style>
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form action="" method="get">
+        {{ filter.form.as_p }}
+        <input type="submit" value="Показать выбранные"/>
+    </form>
+    {% for obj in filter.qs %}
+<h4>{{ obj.client }}</h4> Pk {{ obj.pk }} <b>Тема: </b>{{ obj.theme }}, <b>приоритетность:</b> {{ obj.priority }}.
+<b>Дата подачи:</b> {{obj.application_date}}.
+<b>Дата обновления:</b> {{obj.application_update}}. <br/>
+<p><b>Статус:</b> {{ obj.status }}</p>
+{{ obj.text }}<br/>
+{% if obj.comment_set.all %}
+<p style="color:green">Комментарии к заявке:</p>
+    {% for comment in obj.comment_set.all %}
+    {{comment.id}} {{comment.author}} {{comment.date_created}} {{comment.text}}<br>
+    {% endfor %}
+{% else %}
+<p style="color:grey">Заявка без комментариев</p>
+{% endif %}
+            {% if obj.status == "В обработке" %}
+            <a href="{% url 'mydiplom:approve_claim' pk=obj.pk %}" class="btn3">Подтвердить</a>
+            <a href="% url 'mydiplom:reject_claim' pk=claim.pk %" class="btn4">Отклонить</a>
+            {% endif %}
+        <hr>
+    {% empty %}
+    <p>Заявок от пользователей нет</p>
+    {% endfor %}
+
+{% endblock%}

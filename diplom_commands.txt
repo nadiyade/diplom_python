@@ -1,0 +1,73 @@
+postgres=# create database mydiplom with encoding 'UTF-8';
+CREATE DATABASE
+postgres=# create user nadiya_diplom with password 'mypass';
+CREATE ROLE
+postgres=# grant all on database mydiplom to nadiya_diplom;
+GRANT
+
+pip install django-ipware - for ip definition
+
+https://pypi.org/project/django-countries/#countryselectwidget - виджет стран
+https://www.iso.org/obp/ui/#search - коды стран
+https://stackoverflow.com/questions/2472422/django-file-upload-size-limit - установить размер файла
+https://ru.wikipedia.org/wiki/Список_MIME-типов - стандартные типы файлов
+http://www.cyberforum.ru/python-django/thread2155401.html - путь сохранения файла
+https://python-scripts.com/question/13048 - путь сохранения файла
+
+https://djbook.ru/rel1.9/topics/forms/modelforms.html#inline-formsets - форма из 2 моделей
+https://pocoz.gitbooks.io/django-v-primerah/glava-2-uluchshenie-bloga-s-pomoshyu-rasshirennyh-vozmozhnostej/sozdanie-sistemy-kommentariev/dobavlenie-kommentariev-v-shablon-post-detail.html - комментарии
+https://qna.habr.com/q/506836 - передать в скрытое поле формы(ModelForm) url страницы (с которой запрос)
+https://evileg.com/ru/post/440/ - аватарка в админпанели
+
+If you want to disable the resize of the textarea, you can do it like this :
+comment= forms.CharField(widget=forms.Textarea(attrs={"style": "resize: none"})
+
+https://github.com/stefanfoulis/django-phonenumber-field/blob/master/phonenumber_field/widgets.py - ввод номера телефона
+
+https://djangofan.ru/pravilnoe-obedinenie-formview-i-detailview
+
+пример вывода у урл ListView.as_view(queryset=Post.objects.all().order_by("-created")[:2],
+
+
+{% if form.photo != 'None' %}
+<img src="{{user.photo.url}}" alt="Фотография не загружена" width="10%">
+{% else %}
+<img src="/media/images/bydefault/unnamed.png" alt="Фотография не загружена" width="10%">
+{% endif %}
+
+https://developer.mozilla.org/ru/docs/Learn/Server-side/Django/Forms - как обрабатываются формы
+https://www.pydanny.com/adding-django-form-instance-attributes.html - ключ пользователя в форму
+
+http://sharelink.ru/blog/kommentarii-s-pomoshyu-contentype/ - комментарии
+https://evileg.com/ru/post/350/ - использование фильтров в шаблоне
+
+https://metanit.com/python/django/5.4.php - комментарии добавление на страницу
+
+в html добавить в форму, <input type=hidden name=claim_id value = {{claim.pk}}>
+
+несколько моделей в форме на одной странице https://habr.com/ru/post/81632/
+in forms.py------------------------------
+class UserForm(forms.ModelForm):
+	class Meta:
+	model = User
+	fields = ["username", "email"]
+
+class UserProfileForm(forms.ModelForm):
+	class Meta:
+	model = UserProfile
+in views.py------------------------------------
+def add_user(request):
+	if request.method == "POST":
+	uform = UserForm(data = request.POST)
+	pform = UserProfileForm(data = request.POST)
+		if uform.is_valid() and pform.is_valid():
+			user = uform.save()
+			profile = pform.save(commit = False)
+			profile.user = user
+			profile.save()
+in template----------------------------------------------------
+<form method="post">
+{{ uform.as_p }}
+{{ pform.as_p }}
+<input type="submit" ...>
+</form>
