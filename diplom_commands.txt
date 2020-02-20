@@ -45,6 +45,9 @@ https://metanit.com/python/django/5.4.php - комментарии добавл�
 
 в html добавить в форму, <input type=hidden name=claim_id value = {{claim.pk}}>
 
+https://overcoder.net/q/513850/как-отследить-продолжительность-сеанса-пользователя-в-django
+https://pypi.org/project/django-session-timeout/ - pip install django-session-timeout
+
 несколько моделей в форме на одной странице https://habr.com/ru/post/81632/
 in forms.py------------------------------
 class UserForm(forms.ModelForm):

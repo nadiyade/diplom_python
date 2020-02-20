@@ -87,9 +87,6 @@ class ClientClaimCreateViewForm(forms.ModelForm):
     application_update = forms.DateTimeField(disabled=True, label="Дата и время обновления заявки",
                                              initial=datetime.now())
     status = forms.CharField(disabled=True, label="Статус обработки", max_length=25, initial='В обработке')
-    # first_rejected = forms.BooleanField(disabled=True, label="Отклонена", initial=False)
-    # finally_rejected = forms.BooleanField(disabled=True, label="Окончательно отклонена", initial=False)
-    # restored = forms.BooleanField(disabled=True, label="Восстановлена", initial=False)
     documents = forms.FileField(label='Загрузить документы (один файл)', validators=[file_size], required=False,
                                 help_text='Размер файла не должен превышать 15 MB; '
                                           'предпочтительнее в формате .pdf')

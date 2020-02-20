@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.http import request
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -45,11 +47,13 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',  # added from django-session-timeout
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'mydiplom.middleware_logout.LogoutAfterSomeTime',
 ]
 
 ROOT_URLCONF = 'diplom.urls'
@@ -140,7 +144,9 @@ FIRST_DAY_OF_WEEK = '1'
 
 AUTH_USER_MODEL = 'mydiplom.MyUser'
 
+LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 COUNTRIES_FIRST = ['UA', 'RU', 'BY', 'PL', 'MD', 'RO', 'HU', 'SK']
 
@@ -154,5 +160,7 @@ MEDIA_DIR = os.path.join(BASE_DIR, 'mydiplom', 'media')
 
 MEDIA_ROOT = MEDIA_DIR
 
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-
+SESSION_EXPIRE_SECONDS = 10
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
