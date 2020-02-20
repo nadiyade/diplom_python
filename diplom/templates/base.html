@@ -23,7 +23,8 @@
   </style>
 </head>
 <body>
-<header><a href="{% url 'home' %}" class="btn">На главную</a>
+<header>
+    <a href="{% url 'home' %}" class="btn">На главную</a>
 {% if user.is_authenticated %}
     <a href="{% url 'update' user.pk %}"class="btn">Обновить данные пользователя</a>
     {% if not user.is_superuser %}
@@ -34,7 +35,7 @@
     <img src="{{user.photo.url}}" alt="Фотография не загружена" width="10%" vspace="10">
     {% endif %}<br>
     <p>Вы на сайте под именем "{{user.username}}", id "{{user.id}}"</p>
-    <p>Пользователь зарегистрирован {{user.date_joined}}</p> <p>Последний вход {{user.last_login}} IP: {{user.user_IP}}</p>
+    <p>Пользователь зарегистрирован {{user.date_joined}}</p> <p>Последний вход {{user.last_login}}</p>
     {{ ip }}
 {% else %}
     <a href="{% url 'login' %}"class="btn">Войти (для зарегистрированных пользователей)</a>

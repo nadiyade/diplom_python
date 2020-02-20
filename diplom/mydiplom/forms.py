@@ -48,7 +48,6 @@ class MyForm(UserCreationForm):
     user_file = forms.FileField(label='Загрузить файл', validators=[file_size], required=False,
                                 help_text='Размер файла не должен превышать 15 MB; '
                                           'предпочтительнее в формате .pdf')
-    user_IP = forms.GenericIPAddressField(disabled=True, initial="127.0.0.1")
     username = forms.CharField(max_length=40, label='Логин')
 
     class Meta:

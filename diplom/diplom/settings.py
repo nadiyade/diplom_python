@@ -42,12 +42,12 @@ INSTALLED_APPS = [
     'mydiplom',
     'django_countries',
     'django_filters',
+    # 'rest_framework'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django_session_timeout.middleware.SessionTimeoutMiddleware',  # added from django-session-timeout
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -144,9 +144,7 @@ FIRST_DAY_OF_WEEK = '1'
 
 AUTH_USER_MODEL = 'mydiplom.MyUser'
 
-LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
 
 COUNTRIES_FIRST = ['UA', 'RU', 'BY', 'PL', 'MD', 'RO', 'HU', 'SK']
 
@@ -162,5 +160,3 @@ MEDIA_ROOT = MEDIA_DIR
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-SESSION_EXPIRE_SECONDS = 10
-SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True

@@ -64,7 +64,6 @@ class MyUser(AbstractUser):
     user_site = models.URLField(verbose_name='Введите ссылку на свой сайт', null=True, blank=True)
     additional = models.TextField(max_length=1000, verbose_name='Дополнительные сведения', null=True, blank=True)
     user_file = models.FileField(verbose_name='Загрузить файл', upload_to='files/', null=True, blank=True)
-    user_IP = models.GenericIPAddressField(protocol='both', verbose_name="Регистрация с ІР", default='127.0.0.1')
 
     def __str__(self):
         return "Пользователь {}".format(self.username)
