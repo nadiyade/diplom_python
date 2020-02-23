@@ -1,18 +1,10 @@
 from datetime import datetime, date, time, timedelta
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.db.models import GenericIPAddressField
-from django.forms import Widget, HiddenInput
-from urllib import request
 from django.shortcuts import render
-from django_countries.widgets import CountrySelectWidget
 from django_countries.fields import CountryField
 from .models import GENDER, MyUser, CLAIM_STATUS, CLAIM_PRIORITY, CLAIM_THEME, Claim, Comment
 from .validators import file_size, photo_size
-from .user_ip import get_user_ip
-from django.core.files.base import ContentFile
-from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
 
 
 class MyForm(UserCreationForm):
@@ -101,13 +93,15 @@ class ClientClaimUpdateViewForm(forms.ModelForm):
     class Meta:
         model = Claim
         fields = '__all__'
-        exclude = ('client', 'first_rejected', 'finally_rejected', 'restored')
+        exclude = ('client', 'first_rejected', 'first_rejected_comment', 'first_rejected_comment', 'finally_rejected',
+                   'finally_rejected_comment', 'restore_request', 'restore_request_text', 'restored')
 
     def __init__(self, *args, **kwargs):
         super(ClientClaimUpdateViewForm, self).__init__(*args, **kwargs)
         status = self.fields['status'].initial
-        if status is not None:
-            self.fields['status'].disabled = True
+        theme = self.fields['theme'].initial
+        self.fields['status'].disabled = True
+        self.fields['theme'].disabled = True
 
 
 class ClaimApproveUpdateViewForm(forms.ModelForm):

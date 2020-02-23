@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'mydiplom',
     'django_countries',
     'django_filters',
-    # 'rest_framework'
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -159,4 +159,5 @@ MEDIA_DIR = os.path.join(BASE_DIR, 'mydiplom', 'media')
 MEDIA_ROOT = MEDIA_DIR
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
 

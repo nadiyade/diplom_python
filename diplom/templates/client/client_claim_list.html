@@ -82,41 +82,41 @@
 
     {{ claim.text }}<br>
 
-        {% if claim.status == 'В обработке' and not user.is_superuser %}
-        <br>
-        <form action="{% url 'mydiplom:claim_update' claim.pk %}" method="post">
-        {% csrf_token %}
-        <input class="btn3" type="submit" value="Обновить заявку">
-        </form>
-        <form action="{% url 'mydiplom:claim_delete' claim.pk %}" method="post">
-        {% csrf_token %}
-        <input class="btn4" type="submit" value="Удалить заявку">
-        </form>
-        {% endif %}
+{% if claim.status == 'Принятая' %}
+<form action="{% url 'mydiplom:comment_create' %}" method="post">
+{% csrf_token %}
+    <br>
+    <input type="text" name="text">
+    <input type=hidden name="to_claim" value = {{claim.pk}}>
+<input type="submit" value="Добавить комментарий">
+</form>
+{% endif %}
 
-        {% if claim.finally_rejected and not user.is_superuser %}
-        <br>
-        <form action="{% url 'mydiplom:claim_delete' claim.pk %}" method="post">
-        {% csrf_token %}
-        <input class="btn4" type="submit" value="Удалить заявку">
-        </form>
-        {% endif %}
+    {% if claim.status == 'В обработке' and not user.is_superuser %}
+    <br>
+    <form action="{% url 'mydiplom:claim_update' claim.pk %}" method="post">
+    {% csrf_token %}
+    <input class="btn3" type="submit" value="Обновить заявку">
+    </form>
+    <form action="{% url 'mydiplom:claim_delete' claim.pk %}" method="post">
+    {% csrf_token %}
+    <input class="btn4" type="submit" value="Удалить заявку">
+    </form>
+    {% endif %}
 
-        {% if claim.status == 'Принятая' %}
-        <form action="{% url 'mydiplom:comment_create' %}" method="post">
-        {% csrf_token %}
-            <br>
-            <input type="text" name="text" />
-            <input type=hidden name="to_claim" value = {{claim.pk}}>
-        <input type="submit" value="Добавить комментарий">
-        </form>
-        {% endif %}
+    {% if claim.finally_rejected and not user.is_superuser %}
+    <br>
+    <form action="{% url 'mydiplom:claim_delete' claim.pk %}" method="post">
+    {% csrf_token %}
+    <input class="btn4" type="submit" value="Удалить заявку">
+    </form>
+    {% endif %}
 
-        {% if claim.status == "В обработке" and user.is_superuser %}
-        <br>
-        <a href="{% url 'mydiplom:approve_claim' pk=claim.pk %}" class="btn3">Подтвердить</a>
-        <a href="{% url 'mydiplom:reject_claim' pk=claim.pk %}" class="btn4">Отклонить</a>
-        {% endif %}
+    {% if claim.status == "В обработке" and user.is_superuser %}
+    <br>
+    <a href="{% url 'mydiplom:approve_claim' pk=claim.pk %}" class="btn3">Подтвердить</a>
+    <a href="{% url 'mydiplom:reject_claim' pk=claim.pk %}" class="btn4">Отклонить</a>
+    {% endif %}
 
     {% if claim.comment_set.all %}
     <p style="color:green">Комментарии к заявке:</p>

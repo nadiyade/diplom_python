@@ -66,11 +66,8 @@
     color: white
     }
 </style>
-
 {% extends 'base.html' %}
-
 {% block content %}
-
     <form action="" method="get">
         {{ filter.form.as_p }}
         <input type="submit" value="Показать выбранные"/>
@@ -80,7 +77,31 @@
 <b>Дата подачи:</b> {{obj.application_date}}.
 <b>Дата обновления:</b> {{obj.application_update}}. <br/>
 <p><b>Статус:</b> {{ obj.status }}</p>
+
+{% if obj.first_rejected == True %}
+<b>Отклонена</b> {{ obj.first_rejected }}<br>
+    {% if obj.restore_request == True %}
+        <p style="color:blue"><b>Подана на восстановление</b> {{ obj.restore_request }}</p>
+        <p style="color:blue"><b>Причина повторного запроса</b> {{ obj.restore_request_text }}</p>
+    {% endif %}
+<p style="color:red"><b>Причина отклонения</b> {{ obj.first_rejected_comment }}</p>
+{% endif %}
+{% if obj.finally_rejected == True %}
+<p style="color:red"><b>Причина окончательного отклонения</b> {{ obj.finally_rejected_comment }}</p>
+{% endif %}
+
 {{ obj.text }}<br/>
+
+{% if obj.status == 'Принятая' %}
+<form action="{% url 'mydiplom:comment_create' %}" method="post">
+{% csrf_token %}
+    <br>
+    <input type="text" name="text">
+    <input type=hidden name="to_claim" value = {{claim.pk}}>
+<input type="submit" value="Добавить комментарий">
+</form>
+{% endif %}
+
 {% if obj.comment_set.all %}
 <p style="color:green">Комментарии к заявке:</p>
     {% for comment in obj.comment_set.all %}
@@ -89,13 +110,13 @@
 {% else %}
 <p style="color:grey">Заявка без комментариев</p>
 {% endif %}
-            {% if obj.status == "В обработке" %}
-            <a href="{% url 'mydiplom:approve_claim' pk=obj.pk %}" class="btn3">Подтвердить</a>
-            <a href="% url 'mydiplom:reject_claim' pk=claim.pk %" class="btn4">Отклонить</a>
-            {% endif %}
-        <hr>
+
+{% if obj.status == "В обработке" %}
+<a href="{% url 'mydiplom:approve_claim' pk=obj.pk %}" class="btn3">Подтвердить</a>
+<a href="% url 'mydiplom:reject_claim' pk=claim.pk %" class="btn4">Отклонить</a>
+{% endif %}
+<hr>
     {% empty %}
     <p>Заявок от пользователей нет</p>
     {% endfor %}
-
 {% endblock%}

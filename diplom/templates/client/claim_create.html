@@ -20,10 +20,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h3>Заполните форму заявки</h3>
 <form action="" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ form.as_p }}
+{% csrf_token %}
+{{ form.as_p }}
 <button type="submit">Подать заявку</button>
 </form>
 {% endblock %}

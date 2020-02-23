@@ -27,7 +27,33 @@ https://github.com/stefanfoulis/django-phonenumber-field/blob/master/phonenumber
 https://djangofan.ru/pravilnoe-obedinenie-formview-i-detailview
 
 пример вывода у урл ListView.as_view(queryset=Post.objects.all().order_by("-created")[:2],
+________________________________________________________________
+REST___________________________________________________________
+python manage.py shell
+from mydiplom.models import MyUser, Claim, Comment, GENDER, CLAIM_PRIORITY, CLAIM_STATUS, CLAIM_THEME
+from mydiplom.api.serializers import MyUserSerializer, ClaimSerializer, CommentSerializer
+serializer = ClaimSerializer() # one by one
+print(repr(serializer)) # when classes are created through ModelSerializer
+___________________________________________________
+creating example objects
+__________________________________________________
+comment = Comment(..............) # each object separately
+comment.save()
+serializer = CommentSerializer(comment)
+serializer.data # view attributes of created comments
 
+import json
+string = json.dumps(serializer.data) # Преобразовать JSON в строку
+json.loads(string) # # Преобразовать cтроку в JSON
+
+serializer.is_valid() # validation
+serializer.validated_data
+serializer.save()
+
+передать в сериалайзер список или кверисет из объектов (атрибут many=True)
+serializer = CommentSerializer(Comment.objects.all(), many=True)
+serializer.data
+___________________________________________________________________
 
 {% if form.photo != 'None' %}
 <img src="{{user.photo.url}}" alt="Фотография не загружена" width="10%">
@@ -74,3 +100,36 @@ in template----------------------------------------------------
 {{ pform.as_p }}
 <input type="submit" ...>
 </form>
+______________________________________________________
+access denied
+______________________________________________________
+http://127.0.0.1:8000/client/claim/list/
+http://127.0.0.1:8000/users/
+http://127.0.0.1:8000/client/claims/
+http://127.0.0.1:8000/client/claim/waiting/
+http://127.0.0.1:8000/client/claim/inprogress/
+http://127.0.0.1:8000/client/claim/torestore/
+http://127.0.0.1:8000/client/claim/allrejected/
+
+{% if user.is_superuser %}
+/////some code////
+{% else %}
+<p>Доступ к этой странице есть только у администратора сайта</p>
+{% endif %}
+
+def client_claims(request):
+    if request.user.is_superuser:
+        filter = ClientClaimFilter(request.GET, queryset=Claim.objects.all())
+        return render(request, 'admin/claims_all.html', {'filter': filter})
+    else:
+        return HttpResponse('<h2>Доступ к этой странице есть только у администратора сайта</h2>')
+
+DELETED FROM THE CODE______________________________________________
+class UserListView(ListView):
+    model = MyUser
+    template_name = 'login/user_list.html'
+    paginate_by = 10
+/////
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     context = super().get_context_data(object_list=None, **kwargs)
+    #     return context

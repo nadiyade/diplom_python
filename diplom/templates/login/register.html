@@ -6,7 +6,7 @@
     <title>Registration</title>
 </head>
 <body>
-<header><a href="{% url 'home' %}">На главную</a><br>
+<header><a href="{% url 'home' %}">На главную</a><br></header>
 <form action="" method="post" enctype="multipart/form-data">
       {% csrf_token %}
 <!--      &lt;!&ndash; as_p для того, чтобы каждый элемент формы был с новой строки &ndash;&gt;-->
@@ -14,7 +14,7 @@
 
 {% for field in form %}
     <p>
-        {{ field.label_tag }}
+        {{ field.label_tag}}
         {{field}}
     </p>
         {% if field.help_text %}
@@ -23,7 +23,7 @@
         {% for error in field.errors %}
         <p style="color: red">{{ error | safe }}</p>
         {% endfor %}
-    {% endfor %}
+{% endfor %}
       <button type="submit">Зарегистрироваться</button>
     </form>
 </body>

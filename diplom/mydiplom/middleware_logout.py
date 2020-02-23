@@ -1,8 +1,6 @@
 import time
 from django.contrib import auth
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
 
 SESSION_TIMEOUT = 5*60
@@ -10,7 +8,6 @@ SESSION_TIMEOUT = 5*60
 
 class LogoutAfterSomeTime(MiddlewareMixin):
     def process_request(self, request):
-        response = self.get_response(request)
         if not request.user.is_superuser and request.user.is_authenticated:
             last_user_action = request.session.get('last_user_action')
             request.session['last_user_action'] = time.time()

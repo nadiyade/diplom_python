@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, UpdateView, ListView, DetailView, CreateView, DeleteView
@@ -16,12 +16,18 @@ def home(request):
 
 
 def user_info(request):
-    return render(request, template_name="login/user_info.html")
+    if request.user.is_authenticated:
+        return render(request, template_name="login/user_info.html")
+    else:
+        return HttpResponseRedirect(reverse('home'))
 
 
 def client_claims(request):
-    filter = ClientClaimFilter(request.GET, queryset=Claim.objects.all())
-    return render(request, 'admin/claims_all.html', {'filter': filter})
+    if request.user.is_superuser:
+        filter = ClientClaimFilter(request.GET, queryset=Claim.objects.all())
+        return render(request, 'admin/claims_all.html', {'filter': filter})
+    else:
+        return HttpResponse('<h2>Доступ к этой странице есть только у администратора сайта</h2>')
 
 
 class RegisterFormView(FormView):
@@ -56,10 +62,6 @@ class UserListView(ListView):
     model = MyUser
     template_name = 'login/user_list.html'
     paginate_by = 10
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(object_list=None, **kwargs)
-        return context
 
 
 class UserDetailView(DetailView):
@@ -99,14 +101,16 @@ class ClientClaimDeleteView(DeleteView):
 class ClientClaimListView(ListView):
     model = Claim
     template_name = 'client/client_claim_list.html'
-    ordering = ['-application_update', 'status']
+    ordering = ['-application_update']
     paginate_by = 5
 
     def get_queryset(self):
         if self.request.user.is_superuser:
             queryset = Claim.objects.all()
-        else:
+        elif self.request.user.is_authenticated:
             queryset = Claim.objects.filter(client=self.request.user)
+        else:
+            queryset = []
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -125,8 +129,10 @@ class ClaimAllRejectedListView(ListView):
     def get_queryset(self):
         if self.request.user.is_superuser:
             queryset = Claim.objects.filter(finally_rejected=True)
-        else:
+        elif self.request.user.is_authenticated:
             queryset = Claim.objects.filter(client=self.request.user)
+        else:
+            queryset = []
         return queryset
 
 
@@ -139,22 +145,26 @@ class ClaimInProgressListView(ListView):
     def get_queryset(self):
         if self.request.user.is_superuser:
             queryset = Claim.objects.filter(status="Принятая")
-        else:
+        elif self.request.user.is_authenticated:
             queryset = Claim.objects.filter(client=self.request.user)
+        else:
+            queryset = []
         return queryset
 
 
 class ClaimWaitingListView(ListView):
     model = Claim
     template_name = 'admin/claims_waiting.html'
-    ordering = ['-application_update']
+    ordering = ['priority', '-application_update']
     paginate_by = 5
 
     def get_queryset(self):
         if self.request.user.is_superuser:
             queryset = Claim.objects.filter(status="В обработке")
-        else:
+        elif self.request.user.is_authenticated:
             queryset = Claim.objects.filter(client=self.request.user)
+        else:
+            queryset = []
         return queryset
 
 
@@ -189,22 +199,11 @@ class CommentCreateView(CreateView):
 class CommentListView(ListView):
     model = Comment
     template_name = 'admin/claims_all.html'
-    # template_name = ['client/client_claim_list.html', 'admin/claims_all.html']
     ordering = ['-date_created']
     context_object_name = 'comment_list'
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(object_list=None, **kwargs)
-        return context
-
-    # def get_queryset(self):
-    #     queryset = Comment.objects.filter(to_claim='claim.pk')
-    #     return queryset
-
     # def get_context_data(self, *, object_list=None, **kwargs):
-    #     context = super().get_context_data(object_list=self.model, **kwargs)
-    #     # context.update(
-    #     #     {'comment_update_form': CommentUpdateViewForm})
+    #     context = super().get_context_data(object_list=None, **kwargs)
     #     return context
 
 

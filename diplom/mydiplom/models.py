@@ -99,7 +99,7 @@ class Claim(models.Model):
                                  blank=True)
 
     class Meta:
-        ordering = ['-application_date', 'client']
+        ordering = ['-priority', '-application_date', 'client']
 
 
 class ClientClaimFilter(django_filters.FilterSet):
